@@ -1,29 +1,47 @@
-import { Controller, Param, Get, Delete, Post, Patch } from '@nestjs/common';
+import { Controller, Param, Get, Delete, Post, Patch, Body, Query } from '@nestjs/common';
+import { MoviesService } from './movies.service';
+import { Movie } from './entities/movie.entity';
 
 @Controller('movies') // prefix for all the urls.
 export class MoviesController {
-  @Get()
-  getAll(){
-    return 'returns all movies'
+  // constructor를 통해 moviesService를 가져오는 것
+  constructor(private readonly moviesService: MoviesService) {
   }
 
-  @Get('/:id')
-  getOne(@Param('id') movieId: string){
-    return `returns a single movie: ${movieId}`
+  @Get()
+  getAll(): Movie[] {
+    return this.moviesService.getAll();
+  }
+
+  @Get('search')
+  searchMovie(@Query('year') year: string) {
+    return {
+      message: `searching for a movie in year: ${year}`,
+    };
+  }
+
+  @Get(':id')
+  getOne(@Param('id') movieId: string): Movie {
+    return this.moviesService.getOne(movieId);
   }
 
   @Post()
-  create(){
-    return `this will create a new movie.`
+  create(@Body() data) {
+    return this.moviesService.createOne(data);
   }
 
-  @Delete('/:id')
-  remove(@Param('id') id: string){
-    return `this will delete a movies: ${id}`
+  @Delete(':id')
+  remove(@Param('id') id: string) {
+    return this.moviesService.deleteOne(id);
   }
 
-  @Patch('/:id')
-  patchMovie(@Param('id') id: string){
-    return `this will patch a movie: ${id}`
+  @Patch(':id')
+  patchMovie(@Param('id') id: string, @Body() updateData) {
+    return {
+      message: `this will patch a movie: ${id}`,
+      ...updateData,
+    };
   }
+
+
 }
