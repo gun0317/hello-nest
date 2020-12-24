@@ -1,6 +1,8 @@
 import { Controller, Param, Get, Delete, Post, Patch, Body, Query } from '@nestjs/common';
 import { MoviesService } from './movies.service';
 import { Movie } from './entities/movie.entity';
+import { CreateMovieDto } from './dto/create-movie.dto';
+import { UpdateMovieDto } from './dto/update-movie.dto';
 
 @Controller('movies') // prefix for all the urls.
 export class MoviesController {
@@ -14,29 +16,31 @@ export class MoviesController {
   }
 
   @Get('search')
-  searchMovie(@Query('year') year: string) {
+  searchMovie(@Query('year') year: number) {
     return {
       message: `searching for a movie in year: ${year}`,
     };
   }
 
   @Get(':id')
-  getOne(@Param('id') movieId: string): Movie {
+  getOne(@Param('id') movieId: number): Movie {
     return this.moviesService.getOne(movieId);
   }
 
   @Post()
-  create(@Body() data) {
+  create(@Body() data: CreateMovieDto) {
     return this.moviesService.createOne(data);
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
+  remove(@Param('id') id: number) {
     return this.moviesService.deleteOne(id);
   }
 
   @Patch(':id')
-  patchMovie(@Param('id') id: string, @Body() updateData) {
+  patchMovie(@Param('id') id: number, @Body() updateData: UpdateMovieDto) {
+    this.moviesService.update(id, updateData);
+
     return {
       message: `this will patch a movie: ${id}`,
       ...updateData,
