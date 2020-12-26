@@ -15,6 +15,11 @@ describe('MoviesService', () => {
     service = module.get<MoviesService>(MoviesService);
   });
 
+  // clean-up functions
+  // afterAll(()=>{
+  //
+  // })
+
   // individual test
   it('should be defined', () => {
     expect(service).toBeDefined();
@@ -79,6 +84,19 @@ describe('MoviesService', () => {
       });
       const afterMovieCreation = service.getAll().length;
       expect(afterMovieCreation).toBeGreaterThan(beforeMovieCreation);
+    });
+  });
+
+  describe('update', () => {
+    it('the movie should be updated', () => {
+      service.createOne({
+        title: 'testMovie1',
+        genres: ['test1'],
+        year: 2000,
+      });
+      service.update(1, { title: 'updated' });
+      const movie = service.getOne(1);
+      expect(movie.title).toEqual('updated')
     });
   });
 });
